@@ -245,5 +245,5 @@ int MAIN(int argc, char* argv[]) {
 }
 
 #ifdef COLLECT_STATIC_VAR_DATA
-DEBUG_NEWER_MAIN(tests_main);
+MEMPLUMBER_MAIN(tests_main);
 #endif
