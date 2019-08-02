@@ -5,6 +5,9 @@ environment:
     - compiler: mingw32
     - compiler: mingw-w64
 
+# Rename sh.exe as sh.exe in PATH interferes with MinGW
+- rename "C:\Program Files\Git\usr\bin\sh.exe" "sh2.exe"
+
 before_build:
 - mkdir build
 - cd build
