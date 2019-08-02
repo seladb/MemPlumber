@@ -1,7 +1,6 @@
 #include "memplumber.h"
 #include "test-macros.h"
 #include <string>
-#include <vector>
 #include <stdio.h>
 
 class TestClass1 {
@@ -13,7 +12,6 @@ class TestClass2 {
 
     std::string m_Str;
     int m_Num;
-    std::vector<std::string> m_Vec;
     double* m_DoublePtr;
 
     public:

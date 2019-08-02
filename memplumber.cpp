@@ -1,6 +1,9 @@
 #include <new>
 #include <cstdlib>
 #include <string>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifndef MEMPLUMBER_FILENAME_LEN
 #define MEMPLUMBER_FILENAME_LEN  100

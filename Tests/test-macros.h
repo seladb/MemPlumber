@@ -1,5 +1,7 @@
 // general test macros
 
+#include <stdio.h>
+
 #define TEST_CASE(TestName) void TestName(bool& result)
 
 #define TEST_ASSERT_EQUAL(actual, expected) \

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <new>
+#include <stdint.h>
 #include "memplumber-internals.h"
 
 // Prototypes

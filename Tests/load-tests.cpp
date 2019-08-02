@@ -1,6 +1,8 @@
-#include "memplumber.h"
 #include "test-macros.h"
 #include "test-lib/test-lib.h"
+#include "memplumber.h"
+#include <string.h>
+#include <stdlib.h>
 
 struct SimpleStruct {
     int x;

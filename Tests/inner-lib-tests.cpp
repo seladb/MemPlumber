@@ -1,6 +1,6 @@
-#include "memplumber.h"
 #include "test-macros.h"
 #include "test-lib/test-lib.h"
+#include "memplumber.h"
 
 TEST_CASE(MultiLibTest) {
 
