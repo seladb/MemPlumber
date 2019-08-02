@@ -1,0 +1,21 @@
+version: 1.0.{build}
+
+environment:
+  matrix:
+    - compiler: mingw32
+    - compiler: mingw-w64
+
+before_build:
+- mkdir build
+- cd build
+- if "%compiler%"=="mingw32" (set GENERATOR="MinGW Makefiles")
+- if "%compiler%"=="mingw-w64" (set GENERATOR="MinGW Makefiles")
+- cmake .. -G %GENERATOR% -DCOLLECT_STATIC_VAR_DATA=ON
+
+build_script:
+- if "%compiler%"=="mingw32" mingw32-make all
+- if "%compiler%"=="mingw-w64" mingw32-make all
+
+test_script:
+- cd c:\projects\MemPlumber\build
+- ctest --verbose

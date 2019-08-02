@@ -258,14 +258,15 @@ class MemPlumberInternal {
 };
 
 
-#ifdef _MSC_VER
-char* getCaller() {
-    //TODO
+#if defined _MSC_VER || defined _WIN32
+// TODO: backtrace() is not supported on Windows.
+// We can use dbghelp but it's not supported on MinGW. Need to figure out a way to solve it on all platforms
+const char* getCaller() {
     return "Unknown";
 }
 #else
 #include <execinfo.h>
-char* getCaller() {
+const char* getCaller() {
     void* backtraceArr[3];
     size_t backtraceArrSize;
 
@@ -315,6 +316,19 @@ void operator delete(void* pointer, const char* file, int line) {
 void operator delete(void* pointer) throw() {
     operator delete(pointer, __FILE__, __LINE__);
 }
+
+void operator delete(void* pointer, std::size_t size) {
+    operator delete(pointer, __FILE__, __LINE__);
+}
+
+void operator delete[](void* pointer) {
+    operator delete(pointer, __FILE__, __LINE__);
+}
+
+void operator delete[](void* pointer, std::size_t size) {
+    operator delete(pointer, __FILE__, __LINE__);
+}
+
 
 void operator delete[](void* pointer, const char* file, int line) {
     operator delete(pointer, file, line);

@@ -8,11 +8,12 @@
 // Prototypes
 void* operator new(std::size_t size, const char* file, int line);
 void* operator new[](std::size_t size, const char* file, int line);
-
-//void* operator new[](std::size_t size);
-//void* operator new(std::size_t size);
 void operator delete(void* pointer, const char* file, int line);
 void operator delete[](void* pointer, const char* file, int line);
+// required for Windows compilers
+void operator delete[](void* pointer);  
+void operator delete(void* pointer, std::size_t size);
+void operator delete[](void* pointer, std::size_t size);
 
 // Macros
 #define new new(__FILE__, __LINE__)
