@@ -5,10 +5,10 @@ environment:
     - compiler: mingw32
     - compiler: mingw-w64
     - compiler: vs2015
-      platform: x86
+      platform: Win32
       config: Debug
     - compiler: vs2015
-      platform: x86
+      platform: Win32
       config: Release
     - compiler: vs2015
       platform: x64
@@ -28,7 +28,7 @@ before_build:
 - cd build
 - if "%compiler%"=="mingw32" (set GENERATOR="MinGW Makefiles")
 - if "%compiler%"=="mingw-w64" (set GENERATOR="MinGW Makefiles")
-- if "%compiler%"=="vs2015" if "%platform%"=="x86" (set GENERATOR="Visual Studio 14")
+- if "%compiler%"=="vs2015" if "%platform%"=="Win32" (set GENERATOR="Visual Studio 14")
 - if "%compiler%"=="vs2015" if "%platform%"=="x64" (set GENERATOR="Visual Studio 14 Win64")
 - cmake .. -G %GENERATOR% -DCOLLECT_STATIC_VAR_DATA=ON
 
