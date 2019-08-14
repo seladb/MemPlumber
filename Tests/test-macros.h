@@ -21,8 +21,8 @@
     } \
     allTestsPassed &= TestName##_result
 
-#define SKIP_TEST(TestName) \
-    printf("%-30s: SKIPPED\n", #TestName ""); \
+#define SKIP_TEST(TestName, why) \
+    printf("%-30s: SKIPPED (%s)\n", #TestName "", why); \
 
 #define END_RUNNING_TESTS \
     if (allTestsPassed) \

@@ -78,7 +78,7 @@ MEMPLUMBER_MAIN(tests_main);
 int main(int argc, char* argv[]) {
     START_RUNNING_TESTS;
     
-    SKIP_TEST(StaticVarTest);
+    SKIP_TEST(StaticVarTest, "Library is not compiled with -DCOLLECT_STATIC_VAR_DATA flag");
 
     END_RUNNING_TESTS;
 }

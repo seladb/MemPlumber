@@ -31,7 +31,11 @@ int MAIN(int argc, char* argv[]) {
 
     START_RUNNING_TESTS;
     
+    #if !defined _MSC_VER || !defined _DEBUG
     RUN_TEST(MultiLibTest);
+    #else
+    SKIP_TEST(MultiLibTest, "Additional debug allocations made by VS make it difficult to track real memory allocations");
+    #endif
 
     END_RUNNING_TESTS;
 }

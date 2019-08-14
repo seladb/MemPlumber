@@ -38,11 +38,15 @@ TEST_CASE(BasicTest) {
 
     TestClass2* test2 = new TestClass2();
 
+    #if !defined _MSC_VER || !defined _DEBUG
     CHECK_MEM_LEAK(3, sizeof(TestClass1) + sizeof(TestClass2) + sizeof(double));
+    #endif
 
     delete test1;
 
+    #if !defined _MSC_VER || !defined _DEBUG
     CHECK_MEM_LEAK(2, sizeof(TestClass2) + sizeof(double));
+    #endif
 
     delete test2;
 
@@ -114,8 +118,14 @@ int MAIN(int argc, char* argv[]) {
     START_RUNNING_TESTS;
     
     RUN_TEST(BasicTest);
+    
+    #if !defined _MSC_VER || !defined _DEBUG
     RUN_TEST(MultipleAllocations);
     RUN_TEST(ArrayAllocation);
+    #else
+    SKIP_TEST(MultipleAllocations, "Additional debug allocations made by VS make it difficult to track real memory allocations");
+    SKIP_TEST(ArrayAllocation, "Additional debug allocations made by VS make it difficult to track real memory allocations");
+    #endif
 
     END_RUNNING_TESTS;
 }

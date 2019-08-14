@@ -113,6 +113,7 @@ TEST_CASE(AllocateAllAndThenRelease) {
         complexClassArr[i] = new ComplexClass();
     }
 
+    #if !defined _MSC_VER || !defined _DEBUG
     CHECK_MEM_LEAK(NUM_OF_OBJECTS*23, NUM_OF_OBJECTS*(
         sizeOfSimpleStruct + 
         sizeOfSimpleClass + 
@@ -120,6 +121,7 @@ TEST_CASE(AllocateAllAndThenRelease) {
         sizeOfClassWithMemAllocations +
         sizeOfLibClass +
         sizeOfComplexClass));
+    #endif
 
     for (int i=0; i < NUM_OF_OBJECTS; i++) {
         delete simpleStructArr[i];
@@ -163,6 +165,7 @@ TEST_CASE(AllocateSomeAndReleaseSome) {
         complexClassArr[i] = new ComplexClass();
     }
 
+    #if !defined _MSC_VER || !defined _DEBUG
     CHECK_MEM_LEAK(NUM_OF_OBJECTS*23, NUM_OF_OBJECTS*(
         sizeOfSimpleStruct + 
         sizeOfSimpleClass + 
@@ -170,6 +173,7 @@ TEST_CASE(AllocateSomeAndReleaseSome) {
         sizeOfClassWithMemAllocations +
         sizeOfLibClass +
         sizeOfComplexClass));
+    #endif
 
     for (int i=0; i < NUM_OF_OBJECTS; i++) {
         int index1 = rand() % NUM_OF_OBJECTS;
@@ -207,6 +211,7 @@ TEST_CASE(AllocateSomeAndReleaseSome) {
         complexClassArr[index1] = new ComplexClass();
     }
 
+    #if !defined _MSC_VER || !defined _DEBUG
     CHECK_MEM_LEAK(NUM_OF_OBJECTS*23, NUM_OF_OBJECTS*(
         sizeOfSimpleStruct + 
         sizeOfSimpleClass + 
@@ -214,6 +219,7 @@ TEST_CASE(AllocateSomeAndReleaseSome) {
         sizeOfClassWithMemAllocations +
         sizeOfLibClass +
         sizeOfComplexClass));
+    #endif
 
     for (int i=0; i < NUM_OF_OBJECTS; i++) {
         delete simpleStructArr[i];
