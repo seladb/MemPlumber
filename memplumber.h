@@ -27,8 +27,8 @@ class MemPlumber {
         
     public:
 
-        static void start(bool verbose = false) {
-            __start(verbose);
+        static void start(bool verbose = false, const char* fileDumperName = "", bool append = false) {
+            __start(verbose, fileDumperName, append);
         }
 
         static void stop() {
@@ -39,12 +39,12 @@ class MemPlumber {
             __stop_and_free_all_mem();
         }
 
-        static void memLeakCheck(size_t& memLeakCount, uint64_t& memLeakSize, bool verbose = false) {
-            __mem_leak_check(memLeakCount, memLeakSize, verbose);
+        static void memLeakCheck(size_t& memLeakCount, uint64_t& memLeakSize, bool verbose = false, const char* fileDumperName = "", bool append = false) {
+            __mem_leak_check(memLeakCount, memLeakSize, verbose, fileDumperName, append);
         }
 
-        static void staticMemCheck(size_t& memCount, uint64_t& memSize, bool verbose = false) {
-            __static_mem_check(memCount, memSize, verbose);    
+        static void staticMemCheck(size_t& memCount, uint64_t& memSize, bool verbose = false, const char* fileDumperName = "", bool append = false) {
+            __static_mem_check(memCount, memSize, verbose, fileDumperName, append);
         }
 };
 
