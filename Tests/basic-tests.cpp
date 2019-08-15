@@ -34,8 +34,9 @@ int countLinesInFile(const char* fileName) {
     std::string line;
     std::ifstream file(fileName);
 
-    while (std::getline(file, line))
+    while (std::getline(file, line)) {
         ++numberOfLines;
+    }
     
     return numberOfLines;
 }
@@ -137,8 +138,13 @@ TEST_CASE(DumpToFile) {
 
     STOP_TEST;
 
-    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 31);
+    #if !defined _MSC_VER || !defined _DEBUG
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 62);
     TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 31);
+    #else
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 82);
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 41);
+    #endif
 }
 
 TEST_CASE(DumpToFileAppend) {
@@ -159,8 +165,13 @@ TEST_CASE(DumpToFileAppend) {
 
     STOP_TEST;
 
-    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 62);
+    #if !defined _MSC_VER || !defined _DEBUG
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 124);
     TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 62);
+    #else
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 164);
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 82);
+    #endif
 }
 
 

@@ -85,6 +85,10 @@ class MemPlumberInternal {
             }
         }
     }
+    
+    bool isVerbose() {
+        return m_Verbose && m_Dumper != NULL;
+    }
 
     public:
 
@@ -97,7 +101,7 @@ class MemPlumberInternal {
 
         // if not started, allocate memory and exit
         if (m_ProgramStarted != 0 && !m_Started) {
-            if (m_Verbose) {
+            if (isVerbose()) {
                 fprintf(m_Dumper, "Request for memory allocation before program started\n");
             }
             return malloc(size);
@@ -134,7 +138,7 @@ class MemPlumberInternal {
         // put this metadata in the head of the list
         hashtable[hashIndex] = pointerMetaDataRecord;
 
-        if (m_Verbose) {
+        if (isVerbose()) {
             if (m_ProgramStarted == 0) {
                 fprintf(m_Dumper, "Allocate static variable: %d[bytes] in 0x%p in %s:%d\n", (int)size, actualPointer, file, line);
             } else {
@@ -178,7 +182,7 @@ class MemPlumberInternal {
                     metaDataBucketLinkedListPrevElement->next = metaDataBucketLinkedListElement->next;
                 }
 
-                if (m_Verbose) {
+                if (isVerbose()) {
                     fprintf(m_Dumper, "Free: 0x%p (size %d[bytes]) allocated in: %s:%d\n", 
                         pointer,
                         (int)metaDataBucketLinkedListElement->size,
@@ -194,7 +198,7 @@ class MemPlumberInternal {
         }
 
         // if got to here it means memory was allocated before monitoring started. Simply free the memory and return 
-        if (m_Verbose) {
+        if (isVerbose()) {
             fprintf(m_Dumper, "Pointer 0x%p wasn't found\n", pointer);
         }
 
@@ -211,9 +215,12 @@ class MemPlumberInternal {
         m_Dumper = openFile(fileDumperName, append);
     }
 
-    void stop() {
+    void stop(bool closeDumper = true) {
         m_Started = false;
-        closeFile(m_Dumper);
+        if (closeDumper) {
+            closeFile(m_Dumper);
+            m_Dumper = NULL;
+        }
     }
 
     void checkLeaks(size_t& memLeakCount, uint64_t& memLeakSize, bool verbose, const char* fileDumperName, bool append) {
@@ -311,7 +318,7 @@ class MemPlumberInternal {
 
                 void* actualPointerInRecord = (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t);
 
-                if (m_Verbose) {
+                if (isVerbose()) {
                     fprintf(m_Dumper, "FreeAllMem: freeing 0x%p (size %d[bytes]) allocated in %s:%d\n", 
                         actualPointerInRecord,
                         (int)metaDataBucketLinkedListElement->size,
@@ -329,6 +336,9 @@ class MemPlumberInternal {
             // done freeing all elements in the linked list, set the hashtable bucket to null
             m_PointerListHashtable[index] = NULL;
         }
+        
+        closeFile(m_Dumper);
+        m_Dumper = NULL;
     }
 };
 
@@ -434,7 +444,7 @@ void __stop() {
 }
 
 void __stop_and_free_all_mem() {
-    MemPlumberInternal::getInstance().stop();
+    MemPlumberInternal::getInstance().stop(false);
     MemPlumberInternal::getInstance().freeAllMemory();
 }
 
