@@ -40,6 +40,12 @@ class MemPlumberInternal {
         m_Started = false;
         m_Verbose = false;
 
+        // zero the hashtables
+        for (int i = 0; i < MEMPLUMBER_HASHTABLE_SIZE; i++) {
+            m_PointerListHashtable[i] = NULL;
+            m_StaticPointerListHashtable[i] = NULL;
+        }
+
         #ifdef COLLECT_STATIC_VAR_DATA
         m_ProgramStarted = 0;
         #else
@@ -48,7 +54,7 @@ class MemPlumberInternal {
     }
 
     FILE* openFile(const char* fileName, bool append) {
-        if (fileName == "") { // dump to stdout
+        if (strncmp(fileName, "", 1000) == 0) { // dump to stdout
             return stdout;
         }
         else { // dump to file
@@ -180,6 +186,7 @@ class MemPlumberInternal {
                         metaDataBucketLinkedListElement->line);
                 }
 
+                // free the memory of the current item
                 free(metaDataBucketLinkedListElement);
 
                 return;
@@ -242,6 +249,7 @@ class MemPlumberInternal {
                         metaDataBucketLinkedListElement->line);
                 }
 
+                // go to the next item on the list
                 metaDataBucketLinkedListElement = metaDataBucketLinkedListElement->next;
             }
         }
@@ -279,6 +287,8 @@ class MemPlumberInternal {
 
                 memCount++;
                 memSize += (uint64_t)metaDataBucketLinkedListElement->size;
+
+                // go to the next item on the list
                 metaDataBucketLinkedListElement = metaDataBucketLinkedListElement->next;
             }
         }
@@ -309,9 +319,15 @@ class MemPlumberInternal {
                         metaDataBucketLinkedListElement->line);
                 }
 
+                // free the current element
                 free(metaDataBucketLinkedListElement);
+
+                // go to the next item on the list
                 metaDataBucketLinkedListElement = next;
             }
+            
+            // done freeing all elements in the linked list, set the hashtable bucket to null
+            m_PointerListHashtable[index] = NULL;
         }
     }
 };

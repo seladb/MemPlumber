@@ -2,6 +2,7 @@
 #include "test-macros.h"
 #include <string>
 #include <stdio.h>
+#include <fstream>
 
 class TestClass1 {
     int x;
@@ -27,6 +28,17 @@ class TestClass2 {
         delete m_DoublePtr;
     }
 };
+
+int countLinesInFile(const char* fileName) {
+    int numberOfLines = 0;
+    std::string line;
+    std::ifstream file(fileName);
+
+    while (std::getline(file, line))
+        ++numberOfLines;
+    
+    return numberOfLines;
+}
 
 TEST_CASE(BasicTest) {
 
@@ -107,6 +119,52 @@ TEST_CASE(ArrayAllocation) {
     STOP_TEST;
 }
 
+TEST_CASE(DumpToFile) {
+
+    START_TEST_DUMP_TO_FILE("dumptofile_test.log", false);
+
+    TestClass1* arr1 = new TestClass1[100];
+
+    TestClass1* testArray1[10];
+    TestClass2* testArray2[10];
+
+    for (int i = 0; i < 10; i++) {
+        testArray1[i] = new TestClass1();
+        testArray2[i] = new TestClass2();
+    }
+
+    MemPlumber::memLeakCheck(memLeakCount, memLeakSize, true, "dumptofile_memleakcheck.log", false);
+
+    STOP_TEST;
+
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 31);
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 31);
+}
+
+TEST_CASE(DumpToFileAppend) {
+
+    START_TEST_DUMP_TO_FILE("dumptofile_test.log", true);
+
+    TestClass1* arr1 = new TestClass1[100];
+
+    TestClass1* testArray1[10];
+    TestClass2* testArray2[10];
+
+    for (int i = 0; i < 10; i++) {
+        testArray1[i] = new TestClass1();
+        testArray2[i] = new TestClass2();
+    }
+
+    MemPlumber::memLeakCheck(memLeakCount, memLeakSize, true, "dumptofile_memleakcheck.log", true);
+
+    STOP_TEST;
+
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_test.log"), 62);
+    TEST_ASSERT_EQUAL(countLinesInFile("dumptofile_memleakcheck.log"), 62);
+}
+
+
+
 #ifdef COLLECT_STATIC_VAR_DATA
 #define MAIN tests_main
 #else
@@ -126,6 +184,9 @@ int MAIN(int argc, char* argv[]) {
     SKIP_TEST(MultipleAllocations, "Additional debug allocations made by VS make it difficult to track real memory allocations");
     SKIP_TEST(ArrayAllocation, "Additional debug allocations made by VS make it difficult to track real memory allocations");
     #endif
+
+    RUN_TEST(DumpToFile);
+    RUN_TEST(DumpToFileAppend);
 
     END_RUNNING_TESTS;
 }

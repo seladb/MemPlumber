@@ -1,0 +1,8 @@
+# cmake build dir
+**/build
+
+# Visual Studio Code
+.cproject
+.project
+.vscode
+.favorites.json

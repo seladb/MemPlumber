@@ -55,6 +55,12 @@
     uint64_t memLeakSize; \
     MemPlumber::start(TEST_VERBOSE_INNER)
 
+#define START_TEST_DUMP_TO_FILE(fileName, append) \
+    size_t memLeakCount; \
+    uint64_t memLeakSize; \
+    MemPlumber::start(true, fileName, append)
+
+
 #define STOP_TEST MemPlumber::stopAndFreeAllMemory()
 
 #define CHECK_MEM_LEAK(expectedLeakCount, expectedLeakSize) \

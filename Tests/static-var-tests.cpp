@@ -1,6 +1,7 @@
 #include "memplumber.h"
 #include "test-macros.h"
 #include <stdint.h>
+#include <fstream>
 
 static int StaticVar = 100;
 
@@ -41,6 +42,17 @@ static int* static_int_ptr = new int(100);
 static StaticVarsTestClass* static_class = new StaticVarsTestClass();
 
 
+int countLinesInFile(const char* fileName) {
+    int numberOfLines = 0;
+    std::string line;
+    std::ifstream file(fileName);
+
+    while (std::getline(file, line))
+        ++numberOfLines;
+    
+    return numberOfLines;
+}
+
 
 TEST_CASE(StaticVarTest) {
 
@@ -63,12 +75,30 @@ TEST_CASE(StaticVarTest) {
     STOP_TEST;
 }
 
+TEST_CASE(StaticVarsDumpToFile) {
+
+    size_t staticMemCount;
+    uint64_t staticMemSize;
+    MemPlumber::staticMemCheck(staticMemCount, staticMemSize, true, "staticvarsdump.log", false);
+
+    TEST_ASSERT_EQUAL(countLinesInFile("staticvarsdump.log"), 4);
+
+    MemPlumber::staticMemCheck(staticMemCount, staticMemSize, true, "staticvarsdump.log", true);
+
+    TEST_ASSERT_EQUAL(countLinesInFile("staticvarsdump.log"), 8);
+
+    MemPlumber::staticMemCheck(staticMemCount, staticMemSize, true, "staticvarsdump.log", false);
+
+    TEST_ASSERT_EQUAL(countLinesInFile("staticvarsdump.log"), 4);
+}
+
 #ifdef COLLECT_STATIC_VAR_DATA
 int tests_main(int argc, char* argv[]) {
 
     START_RUNNING_TESTS;
     
     RUN_TEST(StaticVarTest);
+    RUN_TEST(StaticVarsDumpToFile);
 
     END_RUNNING_TESTS;
 }
@@ -79,6 +109,7 @@ int main(int argc, char* argv[]) {
     START_RUNNING_TESTS;
     
     SKIP_TEST(StaticVarTest, "Library is not compiled with -DCOLLECT_STATIC_VAR_DATA flag");
+    SKIP_TEST(StaticVarsDumpToFile, "Library is not compiled with -DCOLLECT_STATIC_VAR_DATA flag");
 
     END_RUNNING_TESTS;
 }
