@@ -1,8 +1,8 @@
+#include <fstream>
 #include "memplumber.h"
 #include "test-macros.h"
 #include <string>
 #include <stdio.h>
-#include <fstream>
 
 class TestClass1 {
     int x;

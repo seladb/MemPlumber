@@ -1,7 +1,7 @@
+#include <fstream>
 #include "memplumber.h"
 #include "test-macros.h"
 #include <stdint.h>
-#include <fstream>
 
 static int StaticVar = 100;
 
