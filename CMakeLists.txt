@@ -20,3 +20,5 @@ target_include_directories(memplumber PUBLIC
 enable_testing()
 
 add_subdirectory(Tests)
+
+add_subdirectory(Examples)

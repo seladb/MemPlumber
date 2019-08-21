@@ -1,5 +1,4 @@
-MemPlumber
-==========
+# MemPlumber
 
 [![Build Status](https://travis-ci.org/seladb/MemPlumber.svg?branch=master)](https://travis-ci.org/seladb/MemPlumber)
 [![Build status](https://ci.appveyor.com/api/projects/status/aw1jwoqa0sb2no45?svg=true)](https://ci.appveyor.com/project/seladb/memplumber)
@@ -19,8 +18,8 @@ Please note it is not recommended to use this library in production since tracki
 - [Getting Started](#getting-started)
 - [Download](#download)
 - [Feature Overview](#feature-overview)
+- [Examples](#examples)
 - [API Reference](#api-reference)
-
 
 ## Getting Started
 
@@ -68,13 +67,13 @@ int main( int argc, const char* argv[]) {
     // init 1 array of 10 objects
     MyClass* myClassArr = new MyClass[10];
 
-    // run memory leak test
-    size_t memLeakCount; 
+    // run memory leak test in verbose mode
+    size_t memLeakCount;
     uint64_t memLeakSize;
     MemPlumber::memLeakCheck(memLeakCount, memLeakSize, true);
 
     // print memory leak results
-    printf("Number of leaked objects: %d\nTotal number of memory leaked: %d[bytes]\n", (int)memLeakCount, (int)memLeakSize);
+    printf("Number of leaked objects: %d\nTotal amount of memory leaked: %d[bytes]\n", (int)memLeakCount, (int)memLeakSize);
 
     return 0;
 }
@@ -123,12 +122,22 @@ There is currently only one configuration flag:
 ## Feature Overview
 
 - Start and stop collecting data about memory allocations. Before starting or after stopping no information is being collected
-- Running in verbose mode which outputs for each allocation and deallocation: where in the code memory was allocated or freed and how much memory was allocated
+- Running in verbose mode which outputs for each allocation and de-allocation: where in the code memory was allocated or freed and how much memory was allocated
 - Run a memory leak test that outputs the number of leaked objects as well as the amount of memory leaked
-- Running the memory leak test in verbose mode also outputs where each leak happenned in the code and how much memory was leaked 
-- Run a static memory test that outputs the number of objects and the amount of memory that is allocated as static objects. This feature is only available if library is compliled with the `-DCOLLECT_STATIC_VAR_DATA=ON` flag
+- Running the memory leak test in verbose mode also outputs where each leak happened in the code and how much memory was leaked
+- Run a static memory test that outputs the number of objects and the amount of memory that is allocated as static objects. This feature is only available if library is compiled with the `-DCOLLECT_STATIC_VAR_DATA=ON` flag
 - Write all output to either `stdout` or a file
 - Manually free all currently allocated memory
+
+## Examples
+
+It's often easier to understand the usage through examples. That's why MemPlumber is shipped with a few examples that are highly documented and explain the basic usage and features of this library. You can find all of them in the [Examples](https://github.com/seladb/MemPlumber/tree/master/Examples) section. Here is a brief overview of those examples:
+
+- [basic-example](https://github.com/seladb/MemPlumber/tree/master/Examples/basic-example.cpp) - provides a simple flow of starting MemPlumber, allocating some memory and then running a mem leak test
+
+- [static-example](https://github.com/seladb/MemPlumber/tree/master/Examples/static-example.cpp) - provides a simple flow of allocating several static variables, and running a static mem check. Please note you have to run this example when you compile MemPlumber with the `-DCOLLECT_STATIC_VAR_DATA=ON` flag
+
+- [dump-to-file-example](https://github.com/seladb/MemPlumber/tree/master/Examples/dump-to-file-example.cpp) - provides examples of how to dump verbose data to files, both data about memory allocations and de-allocations and data during mem leak test
 
 ## API Reference
 
@@ -138,7 +147,7 @@ Start collecting information about memory allocations. Note that before calling 
 
 __Params__:
 
--  `verbose` _[in]_ - A flag indicating whether to dump information on each memory allocation and deallocation. The default value is false
+- `verbose` _[in]_ - A flag indicating whether to dump information on each memory allocation and deallocation. The default value is false
 - `fileDumperName` _[in]_ - If the "verbose" flag is set to true, it is possible to dump the verbose information to a file. If this parameter is set to an empty string (which is also the default value), the verbose information will be dumped to stdout
 - `append` _[in]_ - If the "verbose" flag is set to true and "fileDumperName" is a non-empty string and if this file already exists on disk this parameter indicates whether to append the verbose information to the existing file or start writing from scratch
 
@@ -167,6 +176,7 @@ __Params:__
 Present information about memory allocations of static variables. This information is available only if the library was compiled with the `-DCOLLECT_STATIC_VAR_DATA` flag and if the main method of the application was renamed and replaced by calling `MEMPLUMBER_MAIN(<renamed_original_main_method>);`
 
 __Params:__
+
 - `memCount` _[out]_ - The number of static memory allocations
 - `memSize` _[out]_ - The total amount of memory that was allocated in static variables
 - `verbose` _[in]_ - A flag indicating whether to dump information on all static memory allocations. The default value is false

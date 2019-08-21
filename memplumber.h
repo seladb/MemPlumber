@@ -32,7 +32,7 @@ class MemPlumber {
     public:
 
         /**
-         * Start collecting information about memory allocations. Note that before calling this method no information is collected
+         * Start collecting information about memory allocations. Note that before calling this method no information is collected.
          * @param[in] verbose A flag indicating whether to dump information on each memory allocation and deallocation. The default value is false
          * @param[in] fileDumperName If the "verbose" flag is set to true, it is possible to dump the verbose information to a file. 
          * If this parameter is set to an empty string (which is also the default value), the verbose information will be dumped to stdout
