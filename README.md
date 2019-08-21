@@ -20,6 +20,7 @@ Please note it is not recommended to use this library in production since tracki
 - [Feature Overview](#feature-overview)
 - [Examples](#examples)
 - [API Reference](#api-reference)
+- [License](#license)
 
 ## Getting Started
 
@@ -182,3 +183,7 @@ __Params:__
 - `verbose` _[in]_ - A flag indicating whether to dump information on all static memory allocations. The default value is false
 - `fileDumperName` _[in]_ - If the "verbose" flag is set to true, it is possible to dump the verbose information to a file. If this parameter is set to an empty string (which is also the default value), the verbose information will be dumped to stdout
 - `append` _[in]_ - If the "verbose" flag is set to true and "fileDumperName" is a non-empty string and if this file already exists on disk, this parameter indicates whether to append the verbose information to the existing file or start writing from scratch
+
+## License
+
+MemPlumber is released under the [MIT license](https://choosealicense.com/licenses/mit/).
