@@ -10,13 +10,14 @@ void* operator new(std::size_t size, const char* file, int line);
 void* operator new[](std::size_t size, const char* file, int line);
 void operator delete(void* pointer, const char* file, int line);
 void operator delete[](void* pointer, const char* file, int line);
-// required for Windows compilers
-void operator delete[](void* pointer);  
+
+// required for Windows compilers only
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+void operator delete[](void* pointer);
 void operator delete(void* pointer, std::size_t size);
 void operator delete[](void* pointer, std::size_t size);
+#endif
 
-// Macros
-#define new new(__FILE__, __LINE__)
 
 /**
  * @class MemPlumber
