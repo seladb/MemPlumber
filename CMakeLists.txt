@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(memplumber CXX)
 
-add_library(memplumber memplumber.cpp memplumber.h)
+add_library(memplumber memplumber.cpp)
 
 # Build options
 option(COLLECT_STATIC_VAR_DATA
