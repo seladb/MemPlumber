@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #ifndef MEMPLUMBER_FILENAME_LEN
 #define MEMPLUMBER_FILENAME_LEN  100
