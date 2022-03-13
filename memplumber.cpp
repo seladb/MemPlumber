@@ -68,12 +68,12 @@ class MemPlumberInternal {
         else { // dump to file
             FILE* file = NULL;
             if (!append) { // override the file
-                file = freopen(fileName, "w+", file);
+                file = fopen(fileName, "wt");
             }
             else { // append the file
-                file = freopen(fileName, "a+", file); // try append
+                file = fopen(fileName, "at"); // try append
                 if (!file) { // if append failed, create a new file
-                    file = freopen(fileName, "w+", file);
+                    file = fopen(fileName, "wt");
                 }
             }
 
