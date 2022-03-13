@@ -68,14 +68,14 @@ private:
         }
         else { // dump to file
             FILE* file = NULL;
-            int err;
+             err;
             if (!append) { // override the file
-                err = fopen_s(&file, fileName, "wt");
+                err = fopen_s(&file, fileName, "w+");
             }
             else { // append the file
-                err = fopen_s(&file, fileName, "at"); // try append
+                err = fopen_s(&file, fileName, "a+"); // try append
                 if (!file) { // if append failed, create a new file
-                    err = fopen_s(&file, fileName, "wt");
+                    err = fopen_s(&file, fileName, "w+");
                 }
             }
 
