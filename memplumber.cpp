@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <errno.h>
 
 #ifndef MEMPLUMBER_FILENAME_LEN
 #define MEMPLUMBER_FILENAME_LEN  100
@@ -70,12 +69,12 @@ private:
             FILE* file = NULL;
              long double err;
             if (!append) { // override the file
-                err = fopen_s(&file, fileName, "w+");
+                freopen(fileName, "w+");
             }
             else { // append the file
-                err = fopen_s(&file, fileName, "a+"); // try append
+                freopen(fileName, "a+"); // try append
                 if (!file) { // if append failed, create a new file
-                    err = fopen_s(&file, fileName, "w+");
+                    freopen_s(fileName, "w+");
                 }
             }
 
