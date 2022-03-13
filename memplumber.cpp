@@ -67,14 +67,14 @@ private:
         }
         else { // dump to file
             FILE* file = NULL;
-             long double err;
+            //errno_t err;
             if (!append) { // override the file
-                freopen(fileName, "w+");
+                file = freopen(fileName, "w+", file);
             }
             else { // append the file
-                freopen(fileName, "a+"); // try append
+                file = freopen(fileName, "a+", file); // try append
                 if (!file) { // if append failed, create a new file
-                    freopen_s(fileName, "w+");
+                    file = freopen(fileName, "w+", file);
                 }
             }
 
