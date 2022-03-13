@@ -26,8 +26,8 @@
 #endif
 
 class MemPlumberInternal {
-    private:
-    
+private:
+
     struct new_ptr_list_t {
         new_ptr_list_t* next;
         char file[MEMPLUMBER_FILENAME_LEN];
@@ -54,11 +54,11 @@ class MemPlumberInternal {
             m_StaticPointerListHashtable[i] = NULL;
         }
 
-        #ifdef COLLECT_STATIC_VAR_DATA
+#ifdef COLLECT_STATIC_VAR_DATA
         m_ProgramStarted = 0;
-        #else
+#else
         m_ProgramStarted = -1;
-        #endif //COLLECT_STATIC_VAR_DATA
+#endif //COLLECT_STATIC_VAR_DATA
     }
 
     FILE* openFile(const char* fileName, bool append) {
@@ -67,13 +67,14 @@ class MemPlumberInternal {
         }
         else { // dump to file
             FILE* file = NULL;
+            errno_t err;
             if (!append) { // override the file
-                file = fopen(fileName, "wt");
+                err = fopen_s(&file, fileName, "wt");
             }
             else { // append the file
-                file = fopen(fileName, "at"); // try append
+                err = fopen_s(&file, fileName, "at"); // try append
                 if (!file) { // if append failed, create a new file
-                    file = fopen(fileName, "wt");
+                    err = fopen_s(&file, fileName, "wt");
                 }
             }
 
@@ -93,12 +94,12 @@ class MemPlumberInternal {
             }
         }
     }
-    
+
     bool isVerbose() {
         return m_Verbose && m_Dumper != NULL;
     }
 
-    public:
+public:
 
     static MemPlumberInternal& getInstance() {
         static MemPlumberInternal instance;
@@ -125,7 +126,7 @@ class MemPlumberInternal {
         // if cannot allocate, return NULL
         if (pointerMetaDataRecord == NULL)
             return pointerMetaDataRecord;
-        
+
         // calculate the actual pointer to provide to the user
         void* actualPointer = (char*)pointerMetaDataRecord + sizeof(new_ptr_list_t);
 
@@ -140,8 +141,8 @@ class MemPlumberInternal {
         // fill in the metadata
         pointerMetaDataRecord->line = line;
         pointerMetaDataRecord->size = size;
-        strncpy(pointerMetaDataRecord->file, file, MEMPLUMBER_FILENAME_LEN - 1);
-		pointerMetaDataRecord->file[MEMPLUMBER_FILENAME_LEN - 1] = '\0';
+        strncpy_s(pointerMetaDataRecord->file, file, MEMPLUMBER_FILENAME_LEN - 1);
+        pointerMetaDataRecord->file[MEMPLUMBER_FILENAME_LEN - 1] = '\0';
 
         // put this metadata in the head of the list
         hashtable[hashIndex] = pointerMetaDataRecord;
@@ -149,7 +150,8 @@ class MemPlumberInternal {
         if (isVerbose()) {
             if (m_ProgramStarted == 0) {
                 fprintf(m_Dumper, "Allocate static variable: %d[bytes] in 0x%p in %s:%d\n", (int)size, actualPointer, file, line);
-            } else {
+            }
+            else {
                 fprintf(m_Dumper, "Allocate: %d[bytes] in 0x%p in %s:%d\n", (int)size, actualPointer, file, line);
             }
         }
@@ -166,7 +168,7 @@ class MemPlumberInternal {
         // find the metadata record bucket in the hash table
         size_t hashIndex = MEMPLUMBER_HASH(pointer);
         new_ptr_list_t* metaDataBucketLinkedListElement = m_PointerListHashtable[hashIndex];
-	    new_ptr_list_t* metaDataBucketLinkedListPrevElement = NULL;
+        new_ptr_list_t* metaDataBucketLinkedListPrevElement = NULL;
 
         // inside the bucket, go over the linked list until you find the specific pointer
         while (metaDataBucketLinkedListElement != NULL) {
@@ -191,10 +193,10 @@ class MemPlumberInternal {
                 }
 
                 if (isVerbose()) {
-                    fprintf(m_Dumper, "Free: 0x%p (size %d[bytes]) allocated in: %s:%d\n", 
+                    fprintf(m_Dumper, "Free: 0x%p (size %d[bytes]) allocated in: %s:%d\n",
                         pointer,
                         (int)metaDataBucketLinkedListElement->size,
-                        metaDataBucketLinkedListElement->file, 
+                        metaDataBucketLinkedListElement->file,
                         metaDataBucketLinkedListElement->line);
                 }
 
@@ -258,9 +260,9 @@ class MemPlumberInternal {
 
                 if (verbose) {
                     fprintf(dumper, "Found leaked object at 0x%p (size %d[bytes]) allocated in: %s:%d\n",
-                        (char*) metaDataBucketLinkedListElement + sizeof(new_ptr_list_t), 
-                        (int) metaDataBucketLinkedListElement->size,
-                        metaDataBucketLinkedListElement->file, 
+                        (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t),
+                        (int)metaDataBucketLinkedListElement->size,
+                        metaDataBucketLinkedListElement->file,
                         metaDataBucketLinkedListElement->line);
                 }
 
@@ -294,9 +296,9 @@ class MemPlumberInternal {
 
                 if (verbose) {
                     fprintf(dumper, "Static object allocated at 0x%p (size %d[bytes]) allocated in: %s:%d\n",
-                        (char*) metaDataBucketLinkedListElement + sizeof(new_ptr_list_t), 
-                        (int) metaDataBucketLinkedListElement->size,
-                        metaDataBucketLinkedListElement->file, 
+                        (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t),
+                        (int)metaDataBucketLinkedListElement->size,
+                        metaDataBucketLinkedListElement->file,
                         metaDataBucketLinkedListElement->line);
                 }
 
@@ -327,7 +329,7 @@ class MemPlumberInternal {
                 void* actualPointerInRecord = (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t);
 
                 if (isVerbose()) {
-                    fprintf(m_Dumper, "FreeAllMem: freeing 0x%p (size %d[bytes]) allocated in %s:%d\n", 
+                    fprintf(m_Dumper, "FreeAllMem: freeing 0x%p (size %d[bytes]) allocated in %s:%d\n",
                         actualPointerInRecord,
                         (int)metaDataBucketLinkedListElement->size,
                         metaDataBucketLinkedListElement->file,
@@ -340,11 +342,11 @@ class MemPlumberInternal {
                 // go to the next item on the list
                 metaDataBucketLinkedListElement = next;
             }
-            
+
             // done freeing all elements in the linked list, set the hashtable bucket to null
             m_PointerListHashtable[index] = NULL;
         }
-        
+
         closeFile(m_Dumper);
         m_Dumper = NULL;
     }
@@ -386,20 +388,20 @@ void* operator new[](std::size_t size, const char* file, int line) {
     return operator new(size, file, line);
 }
 
-void* operator new[](size_t size) _THROW_BAD_ALLOC {
-	return operator new(size, getCaller(), 0);
+void* operator new[](size_t size) _THROW_BAD_ALLOC{
+    return operator new(size, getCaller(), 0);
 }
 
 void* operator new(size_t size) _THROW_BAD_ALLOC {
-	return operator new(size, getCaller(), 0);
+    return operator new(size, getCaller(), 0);
 }
 
 void* operator new(size_t size, const std::nothrow_t&) _NOEXCEPT {
-	return operator new(size, getCaller(), 0);
+    return operator new(size, getCaller(), 0);
 }
 
-void* operator new[](size_t size, const std::nothrow_t&) _NOEXCEPT {
-	return operator new[](size, getCaller(), 0);
+void* operator new[](size_t size, const std::nothrow_t&) _NOEXCEPT{
+    return operator new[](size, getCaller(), 0);
 }
 
 void operator delete(void* pointer, const char* file, int line) {
@@ -414,7 +416,7 @@ void operator delete(void* pointer, std::size_t size) {
     operator delete(pointer, __FILE__, __LINE__);
 }
 
-void operator delete[](void* pointer) _NOEXCEPT {
+void operator delete[](void* pointer) _NOEXCEPT{
     operator delete(pointer, __FILE__, __LINE__);
 }
 
@@ -428,18 +430,18 @@ void operator delete[](void* pointer, const char* file, int line) {
 }
 
 void operator delete(void* pointer, const std::nothrow_t&) throw() {
-	operator delete(pointer);
+    operator delete(pointer);
 }
 
 void operator delete[](void* pointer, const std::nothrow_t&) throw() {
-	operator delete(pointer, std::nothrow);
+    operator delete(pointer, std::nothrow);
 }
 
 void __mem_leak_check(size_t& memLeakCount, uint64_t& memLeakSize, bool verbose, const char* fileDumperName, bool append) {
     MemPlumberInternal::getInstance().checkLeaks(memLeakCount, memLeakSize, verbose, fileDumperName, append);
 }
 
-void __static_mem_check(size_t&  memCount, uint64_t& memSize, bool verbose, const char* fileDumperName, bool append) {
+void __static_mem_check(size_t& memCount, uint64_t& memSize, bool verbose, const char* fileDumperName, bool append) {
     MemPlumberInternal::getInstance().staticMemAllocation(memCount, memSize, verbose, fileDumperName, append);
 }
 
