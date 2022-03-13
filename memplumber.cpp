@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #include <new>
 #include <cstdlib>
 #include <string>
@@ -68,12 +69,12 @@ class MemPlumberInternal {
         else { // dump to file
             FILE* file = NULL;
             if (!append) { // override the file
-                file = freopen(fileName, "w+", file);
+                file = fopen(fileName, "w+");
             }
             else { // append the file
-                file = freopen(fileName, "a+", file); // try append
+                file = fopen(fileName, "a+"); // try append
                 if (!file) { // if append failed, create a new file
-                    file = freopen(fileName, "w+", file);
+                    file = fopen(fileName, "w+");
                 }
             }
 
