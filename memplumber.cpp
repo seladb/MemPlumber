@@ -68,7 +68,7 @@ private:
         }
         else { // dump to file
             FILE* file = NULL;
-             err;
+             long double err;
             if (!append) { // override the file
                 err = fopen_s(&file, fileName, "w+");
             }
