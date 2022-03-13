@@ -68,7 +68,7 @@ private:
         }
         else { // dump to file
             FILE* file = NULL;
-            errno_t err;
+            int err;
             if (!append) { // override the file
                 err = fopen_s(&file, fileName, "wt");
             }
