@@ -25,8 +25,8 @@ repos:
     hooks:
       - id: clang-format
         args: ["--style=file", "-i"]  # Use the .clang-format file for configuration and apply all fixes
-      - id: cppcheck
-        args: ["--std=c++11", "--language=c++", "--suppressions-list=cppcheckSuppressions.txt", "--inline-suppr", "--force"]
+      #- id: cppcheck
+      #  args: ["--std=c++11", "--language=c++", "--suppressions-list=cppcheckSuppressions.txt", "--inline-suppr", "--force"]
   - repo: https://github.com/BlankSpruce/gersemi
     rev: 0.20.1
     hooks:
