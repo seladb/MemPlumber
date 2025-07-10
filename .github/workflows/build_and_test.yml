@@ -46,9 +46,9 @@ jobs:
       - name: Configure PcapPlusPlus for Static analysis
         run: cmake -S . -B "$BUILD_DIR"
 
-      #- name: Run clang-tidy on changed files
-      #  run: |
-      #    ./ci/clang-tidy-all.sh changed "$BUILD_DIR"
+      - name: Run clang-tidy on changed files
+        run: |
+          ./ci/clang-tidy-all.sh changed "$BUILD_DIR"
 
   linux:
     runs-on: ${{ matrix.runner }}

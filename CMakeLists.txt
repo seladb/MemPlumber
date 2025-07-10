@@ -9,6 +9,9 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(MEMPLUMBER_MAIN_PROJECT ON)
 endif()
 
+# Export compile commands for external tools
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Build options
 option(
     MEMPLUMBER_COLLECT_STATIC_VAR_DATA

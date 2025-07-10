@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-IGNORE_LIST=""
+IGNORE_LIST=".*Examples* .*Tests*"
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
