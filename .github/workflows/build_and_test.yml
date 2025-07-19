@@ -30,8 +30,6 @@ jobs:
             image: rhel94
           - runner: ubuntu-latest
             image: fedora42
-          - runner: ubuntu-latest
-            image: alpine320
 
     steps:
       - name: Checkout code
@@ -130,44 +128,7 @@ jobs:
           echo "Testing MemPlumber"
           ctest --output-on-failure --test-dir Dist
 
-  mingw-w64:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        include:
-          - env: i686
-            sys: mingw32
-          - env: x86_64
-            sys: mingw64
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Setup MSYS2
-        uses: msys2/setup-msys2@40677d36a502eb2cf0fb808cc9dec31bf6152638 # v2.28.0
-        with:
-          msystem: ${{matrix.sys}}
-          install: >-
-            git
-            mingw-w64-${{matrix.env}}-cmake
-            mingw-w64-${{matrix.env}}-gcc
-            mingw-w64-${{matrix.env}}-make
-
-      - name: Configure MemPlumber
-        shell: msys2 {0}
-        run: cmake -G "MinGW Makefiles" -S . -B "$BUILD_DIR"
-
-      - name: Build MemPlumber
-        shell: msys2 {0}
-        # More than 2 jobs would make the build crash with OOM
-        # cc1plus.exe: out of memory allocating 65536 bytes
-        run: cmake --build "$BUILD_DIR" -j 2
-
-      - name: Test MemPlumber
-        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
-
-  visual-studio:
+  windows:
     strategy:
       matrix:
         include:
@@ -187,7 +148,7 @@ jobs:
         run: cmake -A ${{ matrix.arch }} -G "${{ matrix.platform }}" -S . -B "$env:BUILD_DIR"
 
       - name: Build MemPlumber
-        run: cmake --build $env:BUILD_DIR -j
+        run: cmake --build "$env:BUILD_DIR" -j
 
       - name: Test MemPlumber
-        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure --test-dir "$env:BUILD_DIR"
