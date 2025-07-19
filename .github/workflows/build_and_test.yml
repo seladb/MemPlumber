@@ -60,7 +60,7 @@ jobs:
         run: cmake --build "$BUILD_DIR" -j
 
       - name: Test MemPlumber
-        run: ctest --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
 
       - name: Save Ccache
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -100,7 +100,7 @@ jobs:
         run: cmake --build "$BUILD_DIR" -j
 
       - name: Test MemPlumber
-        run: ctest --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
 
       - name: Save Ccache
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -128,7 +128,7 @@ jobs:
           cmake -S . -B Dist
           cmake --build Dist -j$(sysctl -n hw.ncpu)
           echo "Testing MemPlumber"
-          ctest --test-dir Dist
+          ctest --output-on-failure --test-dir Dist
 
   mingw-w64:
     runs-on: windows-latest
@@ -165,7 +165,7 @@ jobs:
         run: cmake --build "$BUILD_DIR" -j 2
 
       - name: Test MemPlumber
-        run: ctest --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
 
   visual-studio:
     strategy:
@@ -190,4 +190,4 @@ jobs:
         run: cmake --build $env:BUILD_DIR -j
 
       - name: Test MemPlumber
-        run: ctest --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
