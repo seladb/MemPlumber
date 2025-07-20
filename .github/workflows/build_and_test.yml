@@ -163,7 +163,7 @@ jobs:
         run: cmake --build "$BUILD_DIR" -j 2
 
       - name: Test MemPlumber
-        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure -C Debug --test-dir "$BUILD_DIR"
 
   windows:
     strategy:
