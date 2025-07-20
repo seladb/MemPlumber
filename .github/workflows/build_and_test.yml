@@ -156,16 +156,16 @@ jobs:
 
       - name: Configure MemPlumber
         shell: msys2 {0}
-        run: cmake -G "MinGW Makefiles" -S . -B "$BUILD_DIR"
+        run: cmake -G "MinGW Makefiles" -S . -B "$env:BUILD_DIR"
 
       - name: Build MemPlumber
         shell: msys2 {0}
         # More than 2 jobs would make the build crash with OOM
         # cc1plus.exe: out of memory allocating 65536 bytes
-        run: cmake --build "$BUILD_DIR" -j 2
+        run: cmake --build "$env:BUILD_DIR" -j 2
 
       - name: Test MemPlumber
-        run: ctest --output-on-failure -C Debug --test-dir "$BUILD_DIR"
+        run: ctest --output-on-failure -C Debug --test-dir "$env:BUILD_DIR"
 
   windows:
     strategy:
