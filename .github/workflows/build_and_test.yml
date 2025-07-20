@@ -30,6 +30,8 @@ jobs:
             image: rhel94
           - runner: ubuntu-latest
             image: fedora42
+          - runner: ubuntu-latest
+            image: alpine320
 
     steps:
       - name: Checkout code
