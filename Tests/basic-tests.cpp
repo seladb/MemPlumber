@@ -99,7 +99,7 @@ TEST_CASE(MultipleAllocations) {
 
 TEST_CASE(ArrayAllocation) {
 
-    START_TEST_VERBOSE;
+    START_TEST;
 
     TestClass1* arr1 = new TestClass1[100];
 
