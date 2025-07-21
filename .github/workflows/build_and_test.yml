@@ -73,10 +73,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os-version: macos-15
+          - os-version: macos-13
             host-arch: x86_64
             arch: x86_64
-          - os-version: macos-15
+          - os-version: macos-13
             host-arch: arm64
             arch: arm64
 
