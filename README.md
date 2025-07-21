@@ -14,19 +14,17 @@ Please note it is not recommended to use this library in production since tracki
 
 ## Table Of Contents
 
-- [MemPlumber](#memplumber)
-  - [Table Of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-  - [Download](#download)
-  - [Feature Overview](#feature-overview)
-  - [Examples](#examples)
-  - [API Reference](#api-reference)
-    - [`start()`](#start)
-    - [`stop()`](#stop)
-    - [`stopAndFreeAllMemory()`](#stopandfreeallmemory)
-    - [`memLeakCheck()`](#memleakcheck)
-    - [`staticMemCheck()`](#staticmemcheck)
-  - [License](#license)
+- [Getting Started](#getting-started)
+- [Download](#download)
+- [Feature Overview](#feature-overview)
+- [Examples](#examples)
+- [API Reference](#api-reference)
+  - [`start()`](#start)
+  - [`stop()`](#stop)
+  - [`stopAndFreeAllMemory()`](#stopandfreeallmemory)
+  - [`memLeakCheck()`](#memleakcheck)
+  - [`staticMemCheck()`](#staticmemcheck)
+- [License](#license)
 
 ## Getting Started
 
