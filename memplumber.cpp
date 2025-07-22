@@ -14,7 +14,7 @@
 #endif
 
 #ifndef MEMPLUMBER_HASH
-#define MEMPLUMBER_HASH(p) (((unsigned long)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
+#define MEMPLUMBER_HASH(p) (((uintptr_t)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
 #endif
 
 #ifndef _THROW_BAD_ALLOC
@@ -357,7 +357,8 @@ class MemPlumberInternal {
 const char* getCaller() {
     return "Unknown";
 }
-#else
+#elif defined(__has_include) && __has_include(<execinfo.h>)
+// Check if execinfo.h is available (glibc systems)
 #include <execinfo.h>
 const char* getCaller() {
     void* backtraceArr[3];
@@ -375,6 +376,11 @@ const char* getCaller() {
 
     // the caller is second in the backtrace
     return backtraceSymbols[2];
+}
+#else
+// Systems without execinfo.h (e.g., Alpine Linux with musl libc)
+const char* getCaller() {
+    return "Unknown";
 }
 #endif
 
