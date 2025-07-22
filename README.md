@@ -1,7 +1,6 @@
 # MemPlumber
 
-[![Build Status](https://travis-ci.org/seladb/MemPlumber.svg?branch=master)](https://travis-ci.org/seladb/MemPlumber)
-[![Build status](https://ci.appveyor.com/api/projects/status/aw1jwoqa0sb2no45?svg=true)](https://ci.appveyor.com/project/seladb/memplumber)
+[![Build and test](https://github.com/seladb/MemPlumber/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/seladb/MemPlumber/actions/workflows/build_and_test.yml)
 
 MemPlumber is a C++ library that aims to help developers with debugging of memory allocations and detection of memory leaks in C++ applications. It is based on the [Debug_new](https://en.wikipedia.org/wiki/Debug_new) technique and provides a clean and easy-to-use interface.
 
@@ -20,6 +19,11 @@ Please note it is not recommended to use this library in production since tracki
 - [Feature Overview](#feature-overview)
 - [Examples](#examples)
 - [API Reference](#api-reference)
+  - [`start()`](#start)
+  - [`stop()`](#stop)
+  - [`stopAndFreeAllMemory()`](#stopandfreeallmemory)
+  - [`memLeakCheck()`](#memleakcheck)
+  - [`staticMemCheck()`](#staticmemcheck)
 - [License](#license)
 
 ## Getting Started
