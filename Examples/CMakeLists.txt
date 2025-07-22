@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.12)
 
+add_executable(basic-example basic-example.cpp)
+
 target_link_libraries(basic-example PUBLIC memplumber)
 
 add_executable(static-example static-example.cpp)
