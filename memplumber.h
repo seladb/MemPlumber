@@ -18,9 +18,6 @@ void operator delete(void* pointer, std::size_t size);
 void operator delete[](void* pointer, std::size_t size);
 #endif
 
-// Macros
-//#define new new(__FILE__, __LINE__)
-
 /**
  * @class MemPlumber
  * The main interface for MemPlumber. Contains the different methods for start & stop debugging, dump memory leaks and so on
