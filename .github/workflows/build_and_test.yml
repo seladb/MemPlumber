@@ -91,12 +91,136 @@ jobs:
       - name: Build MemPlumber
         run: cmake --build "$BUILD_DIR" -j
 
-      - name: Test PcapPlusPlus
-        run: |
-          ctest --test-dir "$BUILD_DIR"
+      - name: Test MemPlumber
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
 
       - name: Save Ccache
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+
+  macos:
+    runs-on: ${{ matrix.os-version }}
+    strategy:
+      matrix:
+        include:
+          - os-version: macos-13
+            host-arch: x86_64
+            arch: x86_64
+          - os-version: macos-13
+            host-arch: arm64
+            arch: arm64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Restore Ccache
+        id: ccache-restore
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ matrix.os-version }}-${{ matrix.arch }}-ccache-${{ github.run_id }}
+          restore-keys: |
+            ${{ matrix.os-version }}-${{ matrix.arch }}-ccache
+
+      - name: Configure MemPlumber
+        run: cmake -S . -B "$BUILD_DIR"
+
+      - name: Build MemPlumber
+        run: cmake --build "$BUILD_DIR" -j
+
+      - name: Test MemPlumber
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
+
+      - name: Save Ccache
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ steps.ccache-restore.outputs.cache-primary-key }}
+
+  freebsd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ["14.1", "13.4"]
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - name: Test in FreeBSD
+      id: test
+      uses: vmactions/freebsd-vm@8873d98fd1413b5977cb2f7348fe329775159892 # v1.1.9
+      with:
+        release: ${{ matrix.version }}
+        usesh: true
+        prepare: pkg install -y cmake git gmake
+
+        run: |
+          echo "Building MemPlumber"
+          cmake -S . -B Dist
+          cmake --build Dist -j$(sysctl -n hw.ncpu)
+          echo "Testing MemPlumber"
+          ctest --output-on-failure --test-dir Dist
+
+  mingw-w64:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - env: i686
+            sys: mingw32
+          - env: x86_64
+            sys: mingw64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@40677d36a502eb2cf0fb808cc9dec31bf6152638 # v2.28.0
+        with:
+          msystem: ${{matrix.sys}}
+          install: >-
+            git
+            mingw-w64-${{matrix.env}}-cmake
+            mingw-w64-${{matrix.env}}-gcc
+            mingw-w64-${{matrix.env}}-make
+
+      - name: Configure MemPlumber
+        shell: msys2 {0}
+        run: cmake -G "MinGW Makefiles" -S . -B "$BUILD_DIR"
+
+      - name: Build MemPlumber
+        shell: msys2 {0}
+        # More than 2 jobs would make the build crash with OOM
+        # cc1plus.exe: out of memory allocating 65536 bytes
+        run: cmake --build "$BUILD_DIR" -j 2
+
+      - name: Test MemPlumber
+        shell: msys2 {0}
+        run: ctest --output-on-failure --test-dir "$BUILD_DIR"
+
+  windows:
+    strategy:
+      matrix:
+        include:
+          - os: windows-2025
+            platform: "Visual Studio 17 2022"
+            arch: "x64"
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2.0.0
+
+      - name: Configure MemPlumber
+        run: cmake -A ${{ matrix.arch }} -G "${{ matrix.platform }}" -S . -B "$env:BUILD_DIR"
+
+      - name: Build MemPlumber
+        run: cmake --build "$env:BUILD_DIR" -j
+
+      - name: Test MemPlumber
+        run: ctest --output-on-failure -C Debug --test-dir "$env:BUILD_DIR"
