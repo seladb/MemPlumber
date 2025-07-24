@@ -1,15 +1,15 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.12)
 
 # Build options
 option(TEST_VERBOSE "Run tests in verbose mode" OFF)
 option(MEM_CHECK_VERBOSE "Run mem check in verbose mode" OFF)
 
 if(TEST_VERBOSE)
-  add_definitions(-DTEST_VERBOSE)
+    add_definitions(-DTEST_VERBOSE)
 endif()
 
 if(MEM_CHECK_VERBOSE)
-  add_definitions(-DMEM_CHECK_VERBOSE)
+    add_definitions(-DMEM_CHECK_VERBOSE)
 endif()
 
 add_subdirectory(test-lib)
