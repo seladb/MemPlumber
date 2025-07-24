@@ -14,7 +14,7 @@
 #endif
 
 #ifndef MEMPLUMBER_HASH
-#define MEMPLUMBER_HASH(p) (((uintptr_t)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
+#	define MEMPLUMBER_HASH(p) (((uintptr_t)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
 #endif
 
 #ifndef _THROW_BAD_ALLOC
@@ -405,10 +405,11 @@ const char* getCaller()
 }
 #elif defined(__has_include) && __has_include(<execinfo.h>)
 // Check if execinfo.h is available (glibc systems)
-#include <execinfo.h>
-const char* getCaller() {
-    void* backtraceArr[3];
-    size_t backtraceArrSize;
+#	include <execinfo.h>
+const char* getCaller()
+{
+	void* backtraceArr[3];
+	size_t backtraceArrSize;
 
 	// get void*'s for all entries on the stack
 	backtraceArrSize = backtrace(backtraceArr, 3);
@@ -426,8 +427,9 @@ const char* getCaller() {
 }
 #else
 // Systems without execinfo.h (e.g., Alpine Linux with musl libc)
-const char* getCaller() {
-    return "Unknown";
+const char* getCaller()
+{
+	return "Unknown";
 }
 #endif
 
