@@ -10,11 +10,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 # Build options
-option(
-    MEMPLUMBER_COLLECT_STATIC_VAR_DATA
-    "Collect data also on static variable memory allocation"
-    OFF
-)
+option(MEMPLUMBER_COLLECT_STATIC_VAR_DATA "Collect data also on static variable memory allocation" OFF)
 option(MEMPLUMBER_DISABLE_BACKTRACE "Disable backtrace" OFF)
 option(MEMPLUMBER_BUILD_TESTS "Build Tests" ${MEMPLUMBER_MAIN_PROJECT})
 option(MEMPLUMBER_BUILD_EXAMPLES "Build Examples" ${MEMPLUMBER_MAIN_PROJECT})
