@@ -43,7 +43,7 @@ jobs:
           . .venv/bin/activate
           pre-commit run --all-files
 
-      - name: Configure PcapPlusPlus for Static analysis
+      - name: Configure MemPlumber for Static analysis
         run: cmake -S . -B "$BUILD_DIR"
 
       #- name: Run clang-tidy on changed files
