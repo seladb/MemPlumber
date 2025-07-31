@@ -1,0 +1,45 @@
+fail_fast: false
+repos:
+  #- repo: local
+  #  hooks:
+  #    - id: check-clang-format-version
+  #      name: Check clang-format version
+  #      entry: python3 ./ci/check-clang-format-version.py
+  #      language: system
+  #- repo: https://github.com/pre-commit/pre-commit-hooks
+  #  rev: v5.0.0
+  #  hooks:
+  #    - id: check-case-conflict
+  #    - id: check-executables-have-shebangs
+  #    - id: check-json
+  #    - id: check-shebang-scripts-are-executable
+  #    - id: check-merge-conflict
+  #    - id: check-symlinks
+  #    - id: end-of-file-fixer
+  #    - id: forbid-submodules
+  #    - id: mixed-line-ending
+  #      args: ['--fix=lf']
+  #    - id: trailing-whitespace
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        args: ["--style=file", "-i"]  # Use the .clang-format file for configuration and apply all fixes
+      #- id: cppcheck
+      #  args: ["--std=c++11", "--language=c++", "--suppressions-list=cppcheckSuppressions.txt", "--inline-suppr", "--force"]
+  - repo: https://github.com/BlankSpruce/gersemi
+    rev: 0.20.1
+    hooks:
+    - id: gersemi
+      args: ["-i"]
+  #- repo: https://github.com/codespell-project/codespell
+  #  rev: v2.4.1
+  #  hooks:
+  #    - id: codespell
+  #      pass_filenames: false
+  #- repo: https://github.com/crate-ci/typos
+  #  rev: v1.34.0
+  #  hooks:
+  #    - id: typos
+  #      args: ['--config=typos-config.toml']
+  #      pass_filenames: false
