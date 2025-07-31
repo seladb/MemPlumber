@@ -6,3 +6,5 @@
 .project
 .vscode
 .favorites.json
+
+.venv
