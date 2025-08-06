@@ -14,7 +14,7 @@
 #endif
 
 #ifndef MEMPLUMBER_HASH
-#	define MEMPLUMBER_HASH(p) (((uintptr_t)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
+#	define MEMPLUMBER_HASH(p) (((intptr_t)(p) >> 8) % MEMPLUMBER_HASHTABLE_SIZE)
 #endif
 
 #ifndef _THROW_BAD_ALLOC
@@ -42,7 +42,7 @@ private:
 	bool m_Started;
 	int m_ProgramStarted;
 	bool m_Verbose;
-	FILE* m_Dumper;
+	FILE* m_Dumper{nullptr};
 
 	// private c'tor
 	MemPlumberInternal()
@@ -53,8 +53,8 @@ private:
 		// zero the hashtables
 		for (int i = 0; i < MEMPLUMBER_HASHTABLE_SIZE; i++)
 		{
-			m_PointerListHashtable[i] = NULL;
-			m_StaticPointerListHashtable[i] = NULL;
+			m_PointerListHashtable[i] = nullptr;
+			m_StaticPointerListHashtable[i] = nullptr;
 		}
 
 #ifdef COLLECT_STATIC_VAR_DATA
@@ -72,7 +72,7 @@ private:
 		}
 		else
 		{  // dump to file
-			FILE* file = NULL;
+			FILE* file = nullptr;
 			if (!append)
 			{  // override the file
 				file = fopen(fileName, "wt");
@@ -109,7 +109,7 @@ private:
 
 	bool isVerbose()
 	{
-		return m_Verbose && m_Dumper != NULL;
+		return m_Verbose && m_Dumper != nullptr;
 	}
 
 public:
@@ -136,15 +136,18 @@ public:
 		size_t totalSizeToAllocate = size + sizeof(new_ptr_list_t);
 
 		// allocated memory
-		new_ptr_list_t* pointerMetaDataRecord = (new_ptr_list_t*)malloc(totalSizeToAllocate);
-		memset(pointerMetaDataRecord, 0, sizeof(new_ptr_list_t));
+		new_ptr_list_t* pointerMetaDataRecord = reinterpret_cast<new_ptr_list_t*>(malloc(totalSizeToAllocate));
 
 		// if cannot allocate, return NULL
-		if (pointerMetaDataRecord == NULL)
+		if (pointerMetaDataRecord == nullptr)
+		{
 			return pointerMetaDataRecord;
+		}
+
+		memset(pointerMetaDataRecord, 0, sizeof(new_ptr_list_t));
 
 		// calculate the actual pointer to provide to the user
-		void* actualPointer = (char*)pointerMetaDataRecord + sizeof(new_ptr_list_t);
+		void* actualPointer = reinterpret_cast<char*>(pointerMetaDataRecord) + sizeof(new_ptr_list_t);
 
 		// find the hash index for this pointer
 		size_t hashIndex = MEMPLUMBER_HASH(actualPointer);
@@ -182,7 +185,7 @@ public:
 	void freeMemory(void* pointer, const char* file, int line)
 	{
 
-		if (pointer == NULL)
+		if (pointer == nullptr)
 		{
 			return;
 		}
@@ -190,14 +193,15 @@ public:
 		// find the metadata record bucket in the hash table
 		size_t hashIndex = MEMPLUMBER_HASH(pointer);
 		new_ptr_list_t* metaDataBucketLinkedListElement = m_PointerListHashtable[hashIndex];
-		new_ptr_list_t* metaDataBucketLinkedListPrevElement = NULL;
+		new_ptr_list_t* metaDataBucketLinkedListPrevElement = nullptr;
 
 		// inside the bucket, go over the linked list until you find the specific pointer
-		while (metaDataBucketLinkedListElement != NULL)
+		while (metaDataBucketLinkedListElement != nullptr)
 		{
 
 			// get the actual pointer from the record
-			void* actualPointerInRecord = (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t);
+			const void* actualPointerInRecord =
+			    reinterpret_cast<char*>(metaDataBucketLinkedListElement) + sizeof(new_ptr_list_t);
 
 			// if this is not the pointer we're looking for - continue the search
 			if (actualPointerInRecord != pointer)
@@ -210,7 +214,7 @@ public:
 			{  // this is the pointer we're looking for
 
 				// remove the current element from the linked list
-				if (metaDataBucketLinkedListPrevElement == NULL)
+				if (metaDataBucketLinkedListPrevElement == nullptr)
 				{  // this is the first item in the list
 					m_PointerListHashtable[hashIndex] = metaDataBucketLinkedListElement->next;
 				}
@@ -260,7 +264,7 @@ public:
 		if (closeDumper)
 		{
 			closeFile(m_Dumper);
-			m_Dumper = NULL;
+			m_Dumper = nullptr;
 		}
 	}
 
@@ -270,7 +274,7 @@ public:
 		memLeakCount = 0;
 		memLeakSize = 0;
 
-		FILE* dumper = NULL;
+		FILE* dumper = nullptr;
 		if (verbose)
 		{
 			dumper = openFile(fileDumperName, append);
@@ -282,13 +286,13 @@ public:
 			new_ptr_list_t* metaDataBucketLinkedListElement = m_PointerListHashtable[index];
 
 			// if bucket is empty - continue
-			if (metaDataBucketLinkedListElement == NULL)
+			if (metaDataBucketLinkedListElement == nullptr)
 			{
 				continue;
 			}
 
 			// go over all of the elements in the link list in this bucket
-			while (metaDataBucketLinkedListElement != NULL)
+			while (metaDataBucketLinkedListElement != nullptr)
 			{
 
 				memLeakCount++;
@@ -297,9 +301,9 @@ public:
 				if (verbose)
 				{
 					fprintf(dumper, "Found leaked object at 0x%p (size %d[bytes]) allocated in: %s:%d\n",
-					        (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t),
-					        (int)metaDataBucketLinkedListElement->size, metaDataBucketLinkedListElement->file,
-					        metaDataBucketLinkedListElement->line);
+					        reinterpret_cast<char*>(metaDataBucketLinkedListElement) + sizeof(new_ptr_list_t),
+					        static_cast<int>(metaDataBucketLinkedListElement->size),
+					        metaDataBucketLinkedListElement->file, metaDataBucketLinkedListElement->line);
 				}
 
 				// go to the next item on the list
@@ -315,7 +319,7 @@ public:
 		memCount = 0;
 		memSize = 0;
 
-		FILE* dumper = NULL;
+		FILE* dumper = nullptr;
 		if (verbose)
 		{
 			dumper = openFile(fileDumperName, append);
@@ -326,21 +330,21 @@ public:
 			new_ptr_list_t* metaDataBucketLinkedListElement = m_StaticPointerListHashtable[index];
 
 			// if bucket is empty - continue
-			if (metaDataBucketLinkedListElement == NULL)
+			if (metaDataBucketLinkedListElement == nullptr)
 			{
 				continue;
 			}
 
 			// go over all of the elements in the link list in this bucket
-			while (metaDataBucketLinkedListElement != NULL)
+			while (metaDataBucketLinkedListElement != nullptr)
 			{
 
 				if (verbose)
 				{
 					fprintf(dumper, "Static object allocated at 0x%p (size %d[bytes]) allocated in: %s:%d\n",
-					        (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t),
-					        (int)metaDataBucketLinkedListElement->size, metaDataBucketLinkedListElement->file,
-					        metaDataBucketLinkedListElement->line);
+					        reinterpret_cast<char*>(metaDataBucketLinkedListElement) + sizeof(new_ptr_list_t),
+					        static_cast<int>(metaDataBucketLinkedListElement->size),
+					        metaDataBucketLinkedListElement->file, metaDataBucketLinkedListElement->line);
 				}
 
 				memCount++;
@@ -361,17 +365,18 @@ public:
 			new_ptr_list_t* metaDataBucketLinkedListElement = m_PointerListHashtable[index];
 
 			// if bucket is empty - continue
-			if (metaDataBucketLinkedListElement == NULL)
+			if (metaDataBucketLinkedListElement == nullptr)
 			{
 				continue;
 			}
 
 			// go over all of the elements in the link list in this bucket
-			while (metaDataBucketLinkedListElement != NULL)
+			while (metaDataBucketLinkedListElement != nullptr)
 			{
 				new_ptr_list_t* next = metaDataBucketLinkedListElement->next;
 
-				void* actualPointerInRecord = (char*)metaDataBucketLinkedListElement + sizeof(new_ptr_list_t);
+				const void* actualPointerInRecord =
+				    reinterpret_cast<char*>(metaDataBucketLinkedListElement) + sizeof(new_ptr_list_t);
 
 				if (isVerbose())
 				{
@@ -388,11 +393,11 @@ public:
 			}
 
 			// done freeing all elements in the linked list, set the hashtable bucket to null
-			m_PointerListHashtable[index] = NULL;
+			m_PointerListHashtable[index] = nullptr;
 		}
 
 		closeFile(m_Dumper);
-		m_Dumper = NULL;
+		m_Dumper = nullptr;
 	}
 };
 
@@ -403,8 +408,7 @@ const char* getCaller()
 {
 	return "Unknown";
 }
-#elif defined(__has_include) && __has_include(<execinfo.h>)
-// Check if execinfo.h is available (glibc systems)
+#else
 #	include <execinfo.h>
 const char* getCaller()
 {
@@ -424,12 +428,6 @@ const char* getCaller()
 
 	// the caller is second in the backtrace
 	return backtraceSymbols[2];
-}
-#else
-// Systems without execinfo.h (e.g., Alpine Linux with musl libc)
-const char* getCaller()
-{
-	return "Unknown";
 }
 #endif
 
