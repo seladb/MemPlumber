@@ -1,7 +1,6 @@
 # MemPlumber
 
-[![Build Status](https://travis-ci.org/seladb/MemPlumber.svg?branch=master)](https://travis-ci.org/seladb/MemPlumber)
-[![Build status](https://ci.appveyor.com/api/projects/status/aw1jwoqa0sb2no45?svg=true)](https://ci.appveyor.com/project/seladb/memplumber)
+[![Build and test](https://github.com/seladb/MemPlumber/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/seladb/MemPlumber/actions/workflows/build_and_test.yml)
 
 MemPlumber is a C++ library that aims to help developers with debugging of memory allocations and detection of memory leaks in C++ applications. It is based on the [Debug_new](https://en.wikipedia.org/wiki/Debug_new) technique and provides a clean and easy-to-use interface.
 
@@ -20,6 +19,11 @@ Please note it is not recommended to use this library in production since tracki
 - [Feature Overview](#feature-overview)
 - [Examples](#examples)
 - [API Reference](#api-reference)
+  - [`start()`](#start)
+  - [`stop()`](#stop)
+  - [`stopAndFreeAllMemory()`](#stopandfreeallmemory)
+  - [`memLeakCheck()`](#memleakcheck)
+  - [`staticMemCheck()`](#staticmemcheck)
 - [License](#license)
 
 ## Getting Started
@@ -114,11 +118,14 @@ cmake ..
 make
 ```
 
-There is currently only one configuration flag:
+These are the configuration flags:
 
 | Flag                        | Description  |
 |-----------------------------|--------------|
-| `-DCOLLECT_STATIC_VAR_DATA=ON` | Collect data on static variable memory allocation (default is OFF) |
+| `MEMPLUMBER_COLLECT_STATIC_VAR_DATA` | Collect data on static variable memory allocation (default is OFF) |
+| `MEMPLUMBER_DISABLE_BACKTRACE` | Disables backtrace (default is OFF) |
+| `MEMPLUMBER_BUILD_TESTS` | Builds unit tests (ON if in-source build, otherwise OFF) |
+| `MEMPLUMBER_BUILD_EXAMPLES` | Builds examples (ON if in-source build, otherwise OFF) |
 
 ## Feature Overview
 
@@ -126,7 +133,7 @@ There is currently only one configuration flag:
 - Running in verbose mode which outputs for each allocation and de-allocation: where in the code memory was allocated or freed and how much memory was allocated
 - Run a memory leak test that outputs the number of leaked objects as well as the amount of memory leaked
 - Running the memory leak test in verbose mode also outputs where each leak happened in the code and how much memory was leaked
-- Run a static memory test that outputs the number of objects and the amount of memory that is allocated as static objects. This feature is only available if library is compiled with the `-DCOLLECT_STATIC_VAR_DATA=ON` flag
+- Run a static memory test that outputs the number of objects and the amount of memory that is allocated as static objects. This feature is only available if library is compiled with the `-DMEMPLUMBER_COLLECT_STATIC_VAR_DATA=ON` flag
 - Write all output to either `stdout` or a file
 - Manually free all currently allocated memory
 
@@ -136,7 +143,7 @@ It's often easier to understand the usage through examples. That's why MemPlumbe
 
 - [basic-example](https://github.com/seladb/MemPlumber/tree/master/Examples/basic-example.cpp) - provides a simple flow of starting MemPlumber, allocating some memory and then running a mem leak test
 
-- [static-example](https://github.com/seladb/MemPlumber/tree/master/Examples/static-example.cpp) - provides a simple flow of allocating several static variables, and running a static mem check. Please note you have to run this example when you compile MemPlumber with the `-DCOLLECT_STATIC_VAR_DATA=ON` flag
+- [static-example](https://github.com/seladb/MemPlumber/tree/master/Examples/static-example.cpp) - provides a simple flow of allocating several static variables, and running a static mem check. Please note you have to run this example when you compile MemPlumber with the `-DMEMPLUMBER_COLLECT_STATIC_VAR_DATA=ON` flag
 
 - [dump-to-file-example](https://github.com/seladb/MemPlumber/tree/master/Examples/dump-to-file-example.cpp) - provides examples of how to dump verbose data to files, both data about memory allocations and de-allocations and data during mem leak test
 
@@ -174,7 +181,7 @@ __Params:__
 
 ### `staticMemCheck()`
 
-Present information about memory allocations of static variables. This information is available only if the library was compiled with the `-DCOLLECT_STATIC_VAR_DATA` flag and if the main method of the application was renamed and replaced by calling `MEMPLUMBER_MAIN(<renamed_original_main_method>);`
+Present information about memory allocations of static variables. This information is available only if the library was compiled with the `-DMEMPLUMBER_COLLECT_STATIC_VAR_DATA` flag and if the main method of the application was renamed and replaced by calling `MEMPLUMBER_MAIN(<renamed_original_main_method>);`
 
 __Params:__
 
